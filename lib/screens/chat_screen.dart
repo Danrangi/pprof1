@@ -15,16 +15,22 @@ class Message {
   final String text;
   // Timestamp when the message was created
   final DateTime timestamp;
+  // Status of the message (for WhatsApp-like features)
+  final String status;
 
   // Constructor for creating a message
-  Message({required this.sender, required this.text, DateTime? timestamp})
-    : timestamp = timestamp ?? DateTime.now();
+  Message({
+    required this.sender,
+    required this.text,
+    DateTime? timestamp,
+    this.status = 'sent',
+  }) : timestamp = timestamp ?? DateTime.now();
 }
 
 // Main chat screen widget with state
 class ChatScreen extends StatefulWidget {
   // Constructor with optional key parameter
-  const ChatScreen({super.key});
+  const ChatScreen({Key? key}) : super(key: key);
 
   // Create the mutable state for this widget
   @override
@@ -44,6 +50,20 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // Initialize gemma service (currently a placeholder)
   final gemmaService = GemmaService();
+
+  // Initialize with a welcome message
+  @override
+  void initState() {
+    super.initState();
+    // Add an initial message from the AI
+    _messages.add(
+      Message(
+        sender: 'bot',
+        text: "Hello! I'm PProf AI. How can I help you today?",
+        timestamp: DateTime.now(),
+      ),
+    );
+  }
 
   // Clean up controllers when widget is removed
   @override
@@ -66,6 +86,13 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  // Format timestamp to HH:MM format
+  String formatTime(DateTime timestamp) {
+    final hour = timestamp.hour.toString().padLeft(2, '0');
+    final minute = timestamp.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
   // Handle sending a message
   void _handleSubmitted(String text) async {
     // Don't process empty messages
@@ -86,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // Scroll to show the new message
     _scrollToBottom();
 
-    // PHASE 1: Use dummy response
+    // PHASE 1: Use dummy response with typing indicator
     // In Phase 2, this will call the actual Gemma LLM
     await Future.delayed(const Duration(seconds: 1));
 
@@ -112,58 +139,175 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Top app bar
+      // Top app bar styled like WhatsApp/ChatGPT
       appBar: AppBar(
-        title: const Text('PProf AI Chat'),
+        title: Row(
+          children: [
+            // AI Avatar - circular image (optional)
+            CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              radius: 16,
+              child: const Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            // App title
+            const Text('PProf AI'),
+          ],
+        ),
         elevation: 1,
-        centerTitle: true,
+        actions: [
+          // Optional menu button for settings
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {
+              // Show settings or additional options
+            },
+          ),
+        ],
       ),
+      // Chat background with subtle pattern (like WhatsApp)
+      backgroundColor:
+          Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFECE5DD)
+              : const Color(0xFF121B22),
       // Main body with chat messages
       body: Column(
         children: [
           // Chat message list - takes most of the screen
           Expanded(
-            child:
-                _messages.isEmpty
-                    ? const Center(
-                      child: Text(
-                        'Start a conversation with PProf AI!',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                    : ListView.builder(
-                      controller: _scrollController,
-                      itemCount: _messages.length,
-                      padding: const EdgeInsets.all(8.0),
-                      itemBuilder: (context, index) {
-                        final message = _messages[index];
-                        return ChatMessage(
-                          text: message.text,
-                          isUser: message.sender == 'user',
-                        );
-                      },
-                    ),
-          ),
-
-          // Loading indicator when AI is "thinking"
-          if (_isLoading)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(),
+            child: Container(
+              // Optional background pattern
+              decoration: BoxDecoration(
+                color:
+                    Theme.of(context).brightness == Brightness.light
+                        ? const Color(0xFFECE5DD)
+                        : const Color(0xFF121B22),
+                image: DecorationImage(
+                  image: AssetImage(
+                    Theme.of(context).brightness == Brightness.light
+                        ? 'assets/images/chat_bg_light.png'
+                        : 'assets/images/chat_bg_dark.png',
+                  ),
+                  repeat: ImageRepeat.repeat,
+                  opacity: 0.2,
                 ),
               ),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _messages.length,
+                padding: const EdgeInsets.all(8.0),
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  return ChatMessage(
+                    text: message.text,
+                    isUser: message.sender == 'user',
+                    timestamp: message.timestamp,
+                    showAvatar: message.sender == 'bot',
+                  );
+                },
+              ),
             ),
+          ),
 
-          // Divider between chat and input
-          const Divider(height: 1.0),
+          // Typing indicator when AI is "thinking"
+          if (_isLoading)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
+              ),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  // Optional: AI avatar for typing indicator
+                  CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    radius: 12,
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Animated typing dots
+                  const SizedBox(
+                    width: 40,
+                    child: Row(
+                      children: [
+                        _TypingDot(delay: Duration(milliseconds: 0)),
+                        _TypingDot(delay: Duration(milliseconds: 300)),
+                        _TypingDot(delay: Duration(milliseconds: 600)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
           // Input area at the bottom
           InputBox(controller: _textController, onSubmitted: _handleSubmitted),
         ],
+      ),
+    );
+  }
+}
+
+// Animated typing indicator dot
+class _TypingDot extends StatefulWidget {
+  final Duration delay;
+
+  const _TypingDot({required this.delay});
+
+  @override
+  _TypingDotState createState() => _TypingDotState();
+}
+
+class _TypingDotState extends State<_TypingDot>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    )..addListener(() {
+      setState(() {});
+    });
+
+    Future.delayed(widget.delay, () {
+      _controller.repeat(reverse: true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Container(
+        height: 8 + (_animation.value * 4),
+        width: 8 + (_animation.value * 4),
+        decoration: BoxDecoration(
+          color: Colors.grey[600],
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }
