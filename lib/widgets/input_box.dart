@@ -38,25 +38,6 @@ class InputBox extends StatelessWidget {
       // Create a row to hold the text field and send button
       child: Row(
         children: [
-          // Optional attachment button (like WhatsApp)
-          IconButton(
-            icon: Icon(
-              Icons.attach_file,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[600]
-                  : Colors.grey[400],
-            ),
-            onPressed: () {
-              // In Phase 2, this could allow uploading images for analysis
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Attachment feature coming in future update'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-          
           // Text input field - expands to fill available width
           Expanded(
             child: Container(
@@ -105,7 +86,7 @@ class InputBox extends StatelessWidget {
             ),
           ),
           
-          // Send button - WhatsApp/ChatGPT style circular button
+          // Send button - WhatsApp style circular button
           Container(
             margin: const EdgeInsets.only(left: 8.0),
             decoration: BoxDecoration(

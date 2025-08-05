@@ -22,7 +22,7 @@ class PProfApp extends StatelessWidget {
       title: 'PProf',
       // Remove the debug banner in the upper right corner
       debugShowCheckedModeBanner: false,
-      // Light theme configuration - more ChatGPT/WhatsApp inspired
+      // Light theme configuration - WhatsApp inspired
       theme: ThemeData(
         // Primary color similar to WhatsApp
         primaryColor: const Color(0xFF075E54),

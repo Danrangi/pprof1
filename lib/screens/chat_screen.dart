@@ -13,18 +13,12 @@ class Message {
   final String sender;
   // Content of the message
   final String text;
-  // Timestamp when the message was created
+  // Timestamp when the message was created (used internally)
   final DateTime timestamp;
-  // Status of the message (for WhatsApp-like features)
-  final String status;
 
   // Constructor for creating a message
-  Message({
-    required this.sender,
-    required this.text,
-    DateTime? timestamp,
-    this.status = 'sent',
-  }) : timestamp = timestamp ?? DateTime.now();
+  Message({required this.sender, required this.text, DateTime? timestamp})
+    : timestamp = timestamp ?? DateTime.now();
 }
 
 // Main chat screen widget with state
@@ -86,13 +80,6 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  // Format timestamp to HH:MM format
-  String formatTime(DateTime timestamp) {
-    final hour = timestamp.hour.toString().padLeft(2, '0');
-    final minute = timestamp.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
-  }
-
   // Handle sending a message
   void _handleSubmitted(String text) async {
     // Don't process empty messages
@@ -143,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            // AI Avatar - circular image (optional)
+            // AI Avatar - circular image
             CircleAvatar(
               backgroundColor: Theme.of(context).colorScheme.primary,
               radius: 16,
@@ -159,17 +146,9 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
         elevation: 1,
-        actions: [
-          // Optional menu button for settings
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              // Show settings or additional options
-            },
-          ),
-        ],
+        // No three-dot menu
       ),
-      // Chat background with subtle pattern (like WhatsApp)
+      // Chat background with subtle pattern
       backgroundColor:
           Theme.of(context).brightness == Brightness.light
               ? const Color(0xFFECE5DD)
@@ -205,7 +184,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   return ChatMessage(
                     text: message.text,
                     isUser: message.sender == 'user',
-                    timestamp: message.timestamp,
                     showAvatar: message.sender == 'bot',
                   );
                 },
@@ -223,7 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
               alignment: Alignment.centerLeft,
               child: Row(
                 children: [
-                  // Optional: AI avatar for typing indicator
+                  // AI avatar for typing indicator
                   CircleAvatar(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     radius: 12,

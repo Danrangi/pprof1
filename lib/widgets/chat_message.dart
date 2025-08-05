@@ -7,8 +7,6 @@ class ChatMessage extends StatelessWidget {
   final String text;
   // Flag to determine if message is from user (true) or AI (false)
   final bool isUser;
-  // Timestamp to display with the message
-  final DateTime timestamp;
   // Whether to show an avatar (typically for AI messages)
   final bool showAvatar;
 
@@ -17,16 +15,8 @@ class ChatMessage extends StatelessWidget {
     Key? key,
     required this.text,
     required this.isUser,
-    required this.timestamp,
     this.showAvatar = false,
   }) : super(key: key);
-
-  // Format timestamp to HH:MM format
-  String _formatTime(DateTime timestamp) {
-    final hour = timestamp.hour.toString().padLeft(2, '0');
-    final minute = timestamp.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
-  }
 
   // Build the UI for this widget
   @override
@@ -100,23 +90,7 @@ class ChatMessage extends StatelessWidget {
                       horizontal: 16.0,
                       vertical: 12.0,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Message text
-                        Text(text, style: TextStyle(color: textColor)),
-                        // Small gap
-                        const SizedBox(height: 4),
-                        // Timestamp
-                        Text(
-                          _formatTime(timestamp),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: textColor.withOpacity(0.6),
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: Text(text, style: TextStyle(color: textColor)),
                   ),
                 ),
               ],
