@@ -53,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _messages.add(
       Message(
         sender: 'bot',
-        text: "Hello! I'm PProf AI. How can I help you today?",
+        text: "Hello! I'm Pocket Professor. How can I help you today?",
         timestamp: DateTime.now(),
       ),
     );
