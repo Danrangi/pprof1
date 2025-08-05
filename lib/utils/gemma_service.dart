@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 /// Phase 2: Will connect to native code via MethodChannel
 class GemmaService {
   // Define method channel for native communication
-  final MethodChannel _channel = const MethodChannel('com.pprof/gemma');
+  final MethodChannel channel = const MethodChannel('com.pprof/gemma');
 
   // Flag to track if model is loaded
   bool _isModelLoaded = false;

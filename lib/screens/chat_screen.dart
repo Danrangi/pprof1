@@ -43,7 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isLoading = false;
 
   // Initialize gemma service (currently a placeholder)
-  final _gemmaService = GemmaService();
+  final gemmaService = GemmaService();
 
   // Clean up controllers when widget is removed
   @override
