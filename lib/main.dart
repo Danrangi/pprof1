@@ -12,7 +12,7 @@ void main() {
 // Root widget of the application, stateless since it doesn't need to manage state
 class PProfApp extends StatelessWidget {
   // Constructor with key parameter for widget identification
-  const PProfApp({Key? key}) : super(key: key);
+  const PProfApp({super.key});
 
   // Build method defines the widget tree for this component
   @override

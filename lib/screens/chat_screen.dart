@@ -24,7 +24,7 @@ class Message {
 // Main chat screen widget with state
 class ChatScreen extends StatefulWidget {
   // Constructor with optional key parameter
-  const ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({super.key});
 
   // Create the mutable state for this widget
   @override

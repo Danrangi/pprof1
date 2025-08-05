@@ -12,11 +12,11 @@ class ChatMessage extends StatelessWidget {
 
   // Constructor requiring text and isUser flag
   const ChatMessage({
-    Key? key,
+    super.key,
     required this.text,
     required this.isUser,
     this.timestamp,
-  }) : super(key: key);
+  });
 
   // Build the UI for this widget
   @override
