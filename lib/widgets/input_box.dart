@@ -10,10 +10,10 @@ class InputBox extends StatelessWidget {
 
   // Constructor requiring controller and onSubmitted callback
   const InputBox({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onSubmitted,
-  }) : super(key: key);
+  });
 
   // Build the UI for this widget
   @override
